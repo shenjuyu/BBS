@@ -1,0 +1,428 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<TITLE>论坛--看贴</TITLE>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<script type="text/javascript" charset="utf-8" src="ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ueditor.all.min.js"> </script>
+<!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="lang/zh-cn/zh-cn.js"></script>
+
+
+<Link rel="stylesheet" type="text/css" href="css/style.css" />
+<style type="text/css">
+.send{
+margin-left: 1020px;
+margin-top: 10px;
+}
+.pagediv{
+	width: 978px;
+	height: 66px;
+}
+
+.pagediv  ul {
+	width: 400px;
+	height: 24px;
+	list-style: none;
+}
+.pagediv  ul li{
+	float: left;
+}
+ .pageli1  {
+	width: 166.18px;
+	height: 24px;
+	
+}
+
+ .pageli2 {
+	width: 45px;
+	height: 24px;
+	
+}
+ .pageli3 {
+	width: 135px;
+	height: 24px;
+	
+}.pageli3 input{
+	width: 32px;
+	height: 16px;
+}
+.outlogin{
+float: right;
+}
+</style>
+</HEAD>
+
+<BODY>
+<DIV>
+	<IMG src="image/logo.gif">
+</DIV>
+
+<!--      用户信息、登录、注册        -->
+
+	<DIV class="h">
+		<!-- 用户登录状态--欢迎词    -->
+	</DIV>
+
+<!--      主体        -->
+<DIV><br/>
+	<!--      导航        -->
+<DIV>
+	&gt;&gt;<B><a href="index.html">论坛首页</a></B>&gt;&gt;
+	<b><a class="boardname" href="list.html">板块名称</a></b>&gt;&gt;
+	<!-- 帖子标题   href中应当在其后拼接?帖子id=? -->
+	<B><a class="topicname" href="detail.html">帖子标题</a></B>
+</DIV>
+	<br/>
+	<!--      回复、新帖        -->
+	<DIV>
+		<A href="#editor" ><IMG src="image/reply.gif"  border="0" id=td_post></A> 
+	</DIV>
+	<br />
+	<!--      本页主题的标题        -->
+
+	
+	<!--      主题        -->
+	
+	
+	<DIV class="t">
+		<TABLE class="tab0" style="BORDER-TOP-WIDTH: 0px; TABLE-LAYOUT: fixed" cellSpacing="0" cellPadding="0" width="100%">
+			
+		</TABLE>
+	</DIV>
+	
+	<!--      回复        -->
+	
+	<DIV class="t">
+		<TABLE  class="tab1"  style="BORDER-TOP-WIDTH: 0px; TABLE-LAYOUT: fixed" cellSpacing="0" cellPadding="0" width="100%">
+			
+		</TABLE>
+	</DIV>
+	
+	<div class="pagediv">
+				<ul class="pageul">
+					<li class="pageli1">
+						<a class="fristpage" href="javascript:void(0)">首页</a>
+						<a class="frontpage" href="javascript:void(0)">上一页</a>
+						<a class="nowpage"  href="javascript:void(0)">1</a>
+						<a class="nextpage"  href="javascript:void(0)">下一页</a>
+						<a class="lastpage" href="javascript:void(0)">尾页</a>
+						
+					</li>
+					<li class="pageli2" >共<span class="red">1</span>页</li>
+					<li class="pageli3">，跳到 <input class="jump_input_bright" id="jumpPage6" type="text" max-page="2" theme="6" name ="inputpa">页&nbsp;<button class="btn" type="button" value="确定">确定</button>&nbsp;</li>
+					
+				</ul>
+			</div>
+	
+	<!-- 回帖  -->
+	<div>
+   		 <script id="editor" type="text/plain" style="margin-left:460px; width:600px;height:200px;"></script>
+	</div>
+	<button class="send" onclick="send()" style="" >回复</button>
+	
+</DIV>
+
+<!--      声明        -->
+<BR>
+<CENTER class="gray">©俊泽工作室</CENTER>
+</BODY>
+<script src="js/jquery.min.js"></script>
+<script>
+//实例化编辑器
+//建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+var ue = UE.getEditor('editor');
+
+//将地址栏中的板块名放到板块名称中
+var thisHref=decodeURI(window.location.href);
+var name=thisHref.substring(thisHref.indexOf('=')+1);
+
+var bname=name.split("&")[0];
+var b_id=name.substring(name.indexOf('=')+1);
+var tname=b_id.substring(b_id.indexOf('=')+1);
+$('.boardname').html(bname);
+$('.boardname').attr('href','list.html?b_name='+bname+'&b_id='+b_id.split("&")[0]);
+
+$('.topicname').html(tname.split("&")[0]);
+$('.topicname').attr('href',thisHref);
+
+//得到tid
+var tid=tname.substring(tname.indexOf('=')+1);
+//主楼id
+var zhulouid;
+//登陆的用户id
+var userid;
+
+$(function(){
+	//显示欢迎信息
+	$.post('user.action',{op:'findsession'},function(data){
+		if(2==data){
+			var str='您尚未　<a href="login.html">登录</a>&nbsp;| &nbsp; <A href="reg.html">注册</A> |';
+			$('.h').html(str);
+		}else{
+			userid=data.u_id;
+			var str='欢迎用户：'+data.u_name+'&nbsp;&nbsp;登陆BBS论坛 &nbsp;&nbsp;<a href="MyWeb.html" >个人主页</a><a class="outlogin" href="javascript:outbbs()" >退出BBS论坛</a>';
+			$('.h').html(str);
+		}
+	},'json');
+	showpage();
+});
+
+function outbbs(){
+	$.post('user.action',{op:'outlogin'},function(data){
+		if(1==data){
+			window.location.href='login.html';
+		}
+	});
+}
+
+function showpage(){
+	//alert(4);
+	var nowpa=$('.pagediv .nowpage ').html()
+	$.get('reply.action',{op:'find' ,nowpage:nowpa,t_id:tid },function(data){
+		showreply(data);
+	},'json');
+	
+}
+//显示(楼主信息)(回复信息)
+function showreply(arr){
+	
+	
+	//回复界面显示话题与楼主信息（最上面的那一条）
+	uid=arr.rows[0].u_id;
+	//根据用户的id来判断只显示除自己以外的用户[举报]按钮
+	if(userid!=uid){
+		str4='<A  calss="Report " href="javascript:impeach(\''
+			+ arr.rows[0].u_name + '\',\'' + arr.rows[0].u_id
+			+ '\')">  [举报]</A> '
+	}else if(userid==uid){
+		str4 =''
+	}
+	str='<TR class="tr1"><TH style="WIDTH: 20%"><B>'+arr.rows[0].u_name+'[楼主]</B><BR/>'
+		+'<image src="image/head/'+arr.rows[0].u_head+'"/><BR/>注册:['+arr.rows[0].u_regtime+']'+str4+'<BR/></TH>'
+		+'<TH><H4>'+arr.rows[0].t_title+'</H4><DIV>'+arr.rows[0].t_content+'</DIV><DIV class="tipad gray">'
+		+'发表：['+arr.rows[0].t_publishtime+' ]&nbsp;</DIV></TH></TR>';
+	$('.t .tab0 ').html(str);
+	zhulouid=arr.rows[0].u_id;
+	
+
+	
+	//回复信息主要拼接字段用
+	var str='';
+	//拼接楼主标识符用
+	var str1='';
+	//显示删除链接用
+	var str2='';
+	//显示举报链接用
+	var str3='';
+	for(var i=1 ;i<arr.rows.length ;i++){
+		var uid=arr.rows[i].u_id ;
+		//判断根据用户id显示[删除]
+		if(zhulouid==userid){
+			str2='<A class ="delete"  href="javascript:deleteReply('+arr.rows[i].r_id+')">[删除]</A>'
+			//楼主判断
+			if(zhulouid ==uid){
+				str1=' [楼主]';
+			}else{
+				str1='';
+			}
+		}else {
+			//楼主判断
+			if(zhulouid ==uid){
+				str1=' [楼主]';
+			}else{
+				str1='';
+			}
+			//用户判断
+			if(userid!=uid){
+				str2='<A class ="delete"  href="javascript:deleteReply('+arr.rows[i].r_id+')"></A>'
+			}
+			else if(userid ==uid){
+				str2='<A class ="delete"  href="javascript:deleteReply('+arr.rows[i].r_id+')"> [删除]</A>'
+			}
+		}
+		
+		//根据用户的id来判断只显示除自己以外的用户举报按钮
+		if(userid!=uid){
+			str3='<A  calss="Report " href="javascript:impeach(\''
+				+ arr.rows[i].u_name + '\',\'' + arr.rows[i].u_id
+				+ '\')">  [举报]</A> '
+		}else if(userid==uid){
+			str3 =''
+		}
+	 str+='<TR class="tr1"><TH style="WIDTH: 20%"><B>'+arr.rows[i].u_name+str1+'</B><BR/><BR/>'
+			+'<image src="image/head/'+arr.rows[i].u_head+'"/><BR/>注册:['+arr.rows[i].u_regtime+']'+str3+'<BR/></TH>' 
+			+'<TH><H4>第'+(i)+'楼</H4><DIV>'+arr.rows[i].r_content+'</DIV><DIV class="tipad gray">'
+			+'发表：['+arr.rows[i].r_publishtime+'] &nbsp;'+str2+''
+			+'</DIV></TH></TR>';
+	}
+		$('.t .tab1 ').html(str);
+		//得到总页数
+		if(0==arr.total){
+			var page ='共<span class="red">1</span>页';
+		}else{
+			var page ='共<span class="red">'+arr.total+'</span>页';
+		}
+		$('.pagediv .pageul .pageli2').html(page);
+}
+
+//找到楼主id  查找是否是楼主
+function findlouzhu(){
+	$.get('reply.action',{op:'findlouzhu' ,t_id:tid },function(data){
+	
+	},'json');
+}
+
+//删除回复信息
+function deleteReply(rid){
+	var r=confirm('请确认，是否删除回复？');
+	if (r==true){
+		deleteR(rid);
+	}else{
+		return;
+	}
+	
+	function deleteR(rid){
+		$.get('reply.action',{op:'delete',ridd:rid},function(data){
+			if(data==1){
+				
+				alert("删除成功");
+				window.location.reload();
+			}else{
+				alert("删除失败");
+			}
+		});
+	}
+	
+}
+
+//首页
+$(".pagediv .fristpage").click(function(){
+	 $('.pagediv .nowpage').html(1);
+	 showpage();
+});
+
+// 上一页
+$(".pagediv .frontpage").click(function(){
+	var pagenum=$('.pagediv .nowpage').html();
+	if(pagenum<=1){
+		 $('.pagediv .nowpage').html(1);
+	}else{
+		var nowpage =pagenum-1;
+		$('.pagediv .nowpage ').html(nowpage);
+	}
+	showpage();
+});
+
+//下一页
+$(".pagediv .nextpage  ").click(function(){
+		var pagenum=$('.pagediv .nowpage  ' ).html();
+		var AllpageNum =$('.pagediv .pageli2  .red ').html();
+		var nowpage;
+		if(pagenum <AllpageNum ){
+			 nowpage =parseInt(pagenum)+1;
+		}else if(pagenum ==AllpageNum ){
+			 nowpage=AllpageNum
+		}
+		
+		$('.pagediv .nowpage  ').html(nowpage);
+		showpage();
+});
+
+//尾页
+$(" .pagediv .lastpage").click(function(){
+	
+	
+	 var AllpageNum =$('.pagediv .pageli2  .red ').html();
+	
+	$(' .pagediv .nowpage  ').html(AllpageNum);
+
+	showpage();
+	
+});
+
+//跳转页面
+$(".pagediv  .btn").click(function showtopic(arr){
+	var AllpageNum =$('.pagediv .pageli2  .red ').html();
+	var inputpage= $('.pagediv .jump_input_bright' ).val();
+	var inputpa=parseInt(inputpage);
+
+	if(inputpage >=AllpageNum||inputpage<=0){
+		$('.pagediv .jump_input_bright' ).val('');
+		alert('请输入正确的页数')
+		return;
+	}else{
+		$(' .pagediv .nowpage  ').html(inputpa);
+	}
+	showpage();
+
+});
+
+function impeach(name,uid){
+	window.open("impeachuser.html?u_uname="+name+"&u_id="+uid, "newwindow", "height=750px, width=700, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no");
+}
+
+function send(){
+	var str=thisHref.substring(thisHref.indexOf('=')+1);
+	var content=UE.getEditor('editor').getContent();
+	if(""!=content){
+		$.post('reply.action',{op:'addreply',r_content:content,t_id:tid},function(data){
+			if(2==data){
+				var r=confirm('请登录后进行回帖，是否登陆？');
+				if (r==true){
+					window.location.href='login.html';
+				}else{
+					return;
+				}
+			}
+			if(1==data){
+				window.location.reload();
+			}
+		});
+	}else{
+		var r=confirm('您输入的内容不合法，请检查后在进行发表....');
+		if (r==true){
+			return;
+		}else{
+			return;
+		}
+	}
+	
+}
+
+/*
+function fileChange(){
+	var formData=new FormData($('#addgroup')[0]);
+	//得到选择的文件路径
+	var upload=$('.edit_img').val();
+	//得到文件类型
+	var fileType = upload.substr(upload.length-4,upload.length);
+	formData.append('upload',upload);
+	if('.bmp'==fileType.toLowerCase()||'.gif'==fileType.toLowerCase()||'.jpg'==fileType.toLowerCase()||'.png'==fileType.toLowerCase()){
+		$.ajax({
+			type:'post',
+			url:"fileupload.action?op=addfile",
+			data:formData,
+			cache:false,
+			processData:false,
+			contentType:false,
+			success:function(data){
+				var str=$('.content').html()
+				str+='<img width="50px" height="50px" src='+data+' />';
+				$('.content').html(str);
+				$('#fileTypeError').html('');
+			},
+			error:function(){
+				alert("上传失败");
+			}
+		});
+	}else{
+		$('#fileTypeError').html('文件格式错误，仅允许上传文件格式为bmp、gif、jpg、png的图片');
+	}
+}*/
+	
+</script>
+</HTML>
+

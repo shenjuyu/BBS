@@ -1,0 +1,136 @@
+<table id="show_board"></table>
+<script type="text/javascript">
+$(function(){
+	$('#show_board').datagrid({
+		url:'board.action',
+		queryParams:{op:'findbypage'},//查询参数   传入参数  默认查询可用账号信息
+		pagination:true,
+		singleSelect:true,
+		pageList:[3,6,10,13,17],
+		pageSize:6,
+		toolbar: [{
+			iconCls: 'icon-add',
+			handler: function(){
+				$('#show_board').datagrid('appendRow',{
+					name: 'new name',
+					age: 30,
+					note: 'some messages'
+				});
+			}
+		},'-',{
+			iconCls: 'icon-search',
+			handler: function(){
+				//点击当前图标查询禁用 用户信息
+				$('#show_board').datagrid('load',{
+					op:'findbypage',
+					b_parentid:'0'
+				});
+			}
+		}],
+		columns:[[
+			{field:'b_id',title:'编号',width:100},
+			{field:'b_name',title:'板块名',width:100,editor:'text'},
+			{field:'b_parentid',title:'父板块ID',width:100,align:'right',
+				editor:{
+					type:'combobox',
+					options:{
+						url:"board.action?op=findbypage&b_parent=0",
+						valueField:"b_id",
+						textField:"b_name",
+						required:true
+					}
+				}
+			},
+			{field:'a_option',title:'操作',width:100,
+				formatter:function(value,row,index){
+					if (row.editing){
+						var s = '<a href="javascript:void(0)" onclick="saverow(this)">保存</a> ';
+						var c = '<a href="javascript:void(0)" onclick="cancelrow(this)">关闭</a>';
+						return s+c;
+					} else {
+						var e = '<a href="javascript:void(0)" onclick="editrow(this)">编辑</a> ';
+						return e;
+					}
+				}
+			}
+		]],
+		onEndEdit:function(index,row){
+			var bid=row.b_id;
+			var bname=row.b_name;
+			var bparentid=row.b_parentid;
+			if(bid==undefined){
+				$.post('board.action',{op:'addboard',b_name:bname,b_parentid:bparentid},function(data){
+					if(1==data){
+						$.messager.show({
+							title:'添加提示',
+							msg:'添加成功',
+							timeout:3000,
+							showType:'slide'
+						});
+					}else{
+						$.messager.show({
+							title:'添加提示',
+							msg:'添加失败',
+							timeout:3000,
+							showType:'slide'
+						});
+					}
+				});
+			}else{
+				$.post('board.action',{op:'updateboard',b_id:bid,b_name:bname,b_parentid:bparentid},function(data){
+					if(1==data){
+						$.messager.show({
+							title:'修改提示',
+							msg:'修改成功',
+							timeout:3000,
+							showType:'slide'
+						});
+					}else{
+						$.messager.show({
+							title:'修改提示',
+							msg:'修改失败',
+							timeout:4000,
+							showType:'slide'
+						});
+					}
+				});
+			}
+			
+		},
+		onBeforeEdit:function(index,row){
+			row.editing = true;
+			$(this).datagrid('refreshRow', index);
+		},
+		onAfterEdit:function(index,row){
+			$('#show_board').datagrid('reload');
+			row.editing = false;
+			$(this).datagrid('refreshRow', index);
+		},
+		onCancelEdit:function(index,row){
+			row.editing = false;
+			$(this).datagrid('refreshRow', index);
+		}
+	});
+});
+
+function getRowIndex(target){
+	var tr = $(target).closest('tr.datagrid-row');
+	return parseInt(tr.attr('datagrid-row-index'));
+}
+function editrow(target){
+	$('#show_board').datagrid('beginEdit', getRowIndex(target));
+}
+function deleterow(target){
+	$.messager.confirm('Confirm','Are you sure?',function(r){
+		if (r){
+			$('#show_board').datagrid('deleteRow', getRowIndex(target));
+		}
+	});
+}
+function saverow(target){
+	$('#show_board').datagrid('endEdit', getRowIndex(target));
+}
+function cancelrow(target){
+	$('#show_board').datagrid('cancelEdit', getRowIndex(target));
+}
+</script>

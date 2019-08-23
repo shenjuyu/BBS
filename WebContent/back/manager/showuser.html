@@ -1,0 +1,116 @@
+<table id="show_user"></table>
+<script type="text/javascript">
+$(function(){
+	$('#show_user').datagrid({
+		url:'user.action',
+		queryParams:{op:'findbypage'},//查询参数   传入参数  默认查询可用账号信息
+		pagination:true,
+		singleSelect:true,
+		pageList:[3,6,10,13,17],
+		pageSize:10,
+		toolbar: [{
+			iconCls: 'icon-search',
+			handler: function(){
+				//点击当前图标查询禁用 用户信息
+				$('#show_user').datagrid('load',{
+					op:'findbypage',
+					u_state:'2'
+				});
+			}
+		}],
+		columns:[[
+			{field:'u_id',title:'编号',width:100},
+			{field:'u_name',title:'用户名',width:100,},
+			{field:'u_pwd',title:'用户密码',width:100,align:'right',
+				formatter:function(value,row,index){
+					return '******';
+				}
+			},
+			{field:'u_sex',title:'用户性别',width:100,align:'right'},
+			{field:'u_regtime',title:'注册时间',width:155,align:'right'},
+			{field:'u_head',title:'头像	',width:100,align:'right',
+				formatter:function(value,row,index){
+					return '<img src="image/head/'+ row.u_head+'" style="height:50px;width:50px">';
+				}
+			},
+			{field:'u_state',title:'用户状态',width:100,align:'right',
+				formatter:function(value,row,index){
+					if(row.u_state==1){
+						return '正常';
+					}else if(row.u_state==2){
+						return '封禁';
+					}
+				}
+			},
+			{field:'a_option',title:'操作',width:100,
+				formatter:function(value,row,index){
+					if(row.u_state==1){
+						return '<a href="javascript:void(0)" onclick="blockUser('+row.u_id+','+row.u_state+')">封禁</a>';
+					}else if(row.u_state==2){
+						return '<a href="javascript:void(0)" onclick="blockUser('+row.u_id+','+row.u_state+')">解封</a>';
+					}
+				}
+			}
+		]],
+		onEndEdit:function(index,row){
+			alert("编辑结束");
+		},
+		onBeforeEdit:function(index,row){
+			row.editing = true;
+			$(this).datagrid('refreshRow', index);
+		},
+		onAfterEdit:function(index,row){
+			$('#show_user').datagrid('reload');
+			row.editing = false;
+			$(this).datagrid('refreshRow', index);
+		},
+		onCancelEdit:function(index,row){
+			row.editing = false;
+			$(this).datagrid('refreshRow', index);
+		}
+	});
+});
+
+function blockUser(uid,ustate){
+	$.post('user.action',{op:'updatestate',u_id:uid,u_state:ustate},function(data){
+		if(1==data){
+			$('#show_user').datagrid('reload');
+			$.messager.show({
+				title:'修改提示',
+				msg:'用户状态修改成功',
+				timeout:4000,
+				showType:'slide'
+			});
+		}else if(2==data){
+			$.messager.show({
+				title:'修改提示',
+				msg:'用户状态修改失败',
+				timeout:4000,
+				showType:'slide'
+			});
+		}
+		
+	});
+}
+
+function getRowIndex(target){
+	var tr = $(target).closest('tr.datagrid-row');
+	return parseInt(tr.attr('datagrid-row-index'));
+}
+function editrow(target){
+	$('#show_user').datagrid('beginEdit', getRowIndex(target));
+}
+function deleterow(target){
+	$.messager.confirm('Confirm','Are you sure?',function(r){
+		if (r){
+			$('#show_user').datagrid('deleteRow', getRowIndex(target));
+		}
+	});
+}
+function saverow(target){
+	$('#show_user').datagrid('endEdit', getRowIndex(target));
+}
+function cancelrow(target){
+	$('#show_user').datagrid('cancelEdit', getRowIndex(target));
+}
+</script>

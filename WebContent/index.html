@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<TITLE>论坛</TITLE>
+<Link rel="stylesheet" type="text/css" href="css/style.css" />
+<style type="text/css">
+.outlogin{
+float:right;
+}
+</style>
+</HEAD>
+
+<BODY>
+
+<DIV>
+	<IMG src="image/logo.gif">
+</DIV>
+<!--      用户信息、登录、注册        -->
+
+<DIV class="h">
+	<!-- 用户登录状态--欢迎词    -->
+</DIV>
+
+<!--      主体        -->
+<DIV class="t">
+	<TABLE cellSpacing="0" cellPadding="0" width="100%">
+ 	
+	</TABLE>
+</DIV>
+
+<BR/>
+<CENTER class="gray">©俊泽工作室</CENTER>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript">
+
+$.post('board.action',{op:'find',b_parentid:'0'},function(data){
+	var str='<TR class="tr2" align="center"><TD colSpan="2">论坛</TD>'
+		+'<TD style="WIDTH: 10%;">主题</TD><TD style="WIDTH: 30%">最后发表</TD></TR>';
+	for(var i=0;i<data.length;i++){
+		if(undefined!=data[i].parent_name){
+			str+='<TR class="tr3"><TD colspan="4">'+data[i].parent_name+'</TD></TR>';
+		}else if(undefined!=data[i].u_name){
+			str+='<TR class="tr3"><TD width="5%">&nbsp;</TD><TH align="left">'
+				+'<IMG src="image/board.gif"><A href="list.html?b_name='+data[i].b_name+'&b_id='+data[i].b_id+'">'+data[i].b_name+'</A></TH>'
+				+'<TD align="center">'+data[i].num+'</TD><TH><SPAN><A href="detail.html?b_name='+data[i].b_name+'&b_id='+data[i].b_id+'&t_title='+data[i].t_title+'&t_id='+data[i].t_id+'">'+data[i].t_title+'</A>'
+				+'</SPAN><BR/><SPAN>'+data[i].u_name+'</SPAN><SPAN class="gray"> [ '+data[i].t_modifytime+' ]</SPAN>'
+				+'</TH></TR>';
+		}else{
+			str+='<TR class="tr3"><TD width="5%">&nbsp;</TD><TH align="left">'
+				+'<IMG src="image/board.gif"><A href="list.html?b_name='+data[i].b_name+'&b_id='+data[i].b_id+'">'+data[i].b_name+'</A></TH>'
+				+'<TD align="center"></TD><TH></TH></TR>';
+		}
+	}
+	$('.t table').html(str);
+},'json');
+
+function outbbs(){
+	$.post('user.action',{op:'outlogin'},function(data){
+		if(1==data){
+			window.location.href='login.html';
+		}
+	});
+}
+
+//显示欢迎信息
+$.post('user.action',{op:'findsession'},function(data){
+	if(2==data){
+		var str='您尚未　<a href="login.html">登录</a>&nbsp;| &nbsp; <A href="reg.html">注册</A> |';
+		$('.h').html(str);
+	}else{
+		var str='欢迎用户：'+data.u_name+'&nbsp;&nbsp;登陆BBS论坛  &nbsp;&nbsp;<a href="MyWeb.html" >个人主页</a><a class="outlogin" href="javascript:outbbs()" >退出BBS论坛</a>';
+		$('.h').html(str);
+	}
+},'json');
+</script>
+</BODY>
+</HTML>

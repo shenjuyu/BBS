@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>BBS论坛管理员注册</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			html {
+				height: 100%;
+			}
+			
+			body {
+				height: 100%;
+				background: #fff url(images/backgroud.png) 50% 50% no-repeat;
+				background-size: cover;
+			}
+			
+			.dowebok {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				width: 430px;
+				height: 550px;
+				margin: -276px 0 0 -215px;
+				border: 1px solid #fff;
+				border-radius: 20px;
+				overflow: hidden;
+			}
+			
+			.logo {
+				width: 104px;
+				height: 104px;
+				margin: 50px auto 80px;
+				background: url(images/login.png) 0 0 no-repeat;
+			}
+			
+			.form-item {
+				position: relative;
+				width: 360px;
+				margin: 0 auto;
+				padding-bottom: 30px;
+			}
+			
+			.form-item input {
+				width: 288px;
+				height: 48px;
+				padding-left: 70px;
+				border: 1px solid #fff;
+				border-radius: 25px;
+				font-size: 18px;
+				color: #fff;
+				background-color: transparent;
+				outline: none;
+			}
+			
+			.form-item button {
+				width: 360px;
+				height: 50px;
+				border: 0;
+				border-radius: 25px;
+				font-size: 18px;
+				color: #1f6f4a;
+				outline: none;
+				cursor: pointer;
+				background-color: #fff;
+			}
+			
+			#username {
+				background: url(images/emil.png) 20px 14px no-repeat;
+			}
+			
+			#password {
+				background: url(images/password.png) 23px 11px no-repeat;
+			}
+			#truepassword{
+				background: url(images/password.png) 23px 11px no-repeat;
+			}
+			#submit{
+				margin-bottom: -20px;
+			}
+			
+			.tip {
+				display: none;
+				position: absolute;
+				left: 20px;
+				top: 52px;
+				font-size: 14px;
+				color: #f50;
+			}
+			
+			.reg-bar {
+				width: 360px;
+				font-size: 14px;
+			}
+			
+			.reg-bar a {
+				color: #fff;
+				text-decoration: none;
+			}
+			
+			.reg-bar a:hover {
+				text-decoration: underline;
+			}
+			
+			.reg-bar .reg {
+				float: right;
+			}
+			
+			.reg-bar .forget {
+				float: right;
+			}
+			
+			.dowebok ::-webkit-input-placeholder {
+				font-size: 18px;
+				line-height: 1.4;
+				color: #fff;
+			}
+			
+			.dowebok :-moz-placeholder {
+				font-size: 18px;
+				line-height: 1.4;
+				color: #fff;
+			}
+			
+			.dowebok ::-moz-placeholder {
+				font-size: 18px;
+				line-height: 1.4;
+				color: #fff;
+			}
+			
+			.dowebok :-ms-input-placeholder {
+				font-size: 18px;
+				line-height: 1.4;
+				color: #fff;
+			}
+			
+			@media screen and (max-width: 500px) {
+				* {
+					box-sizing: border-box;
+				}
+				.dowebok {
+					position: static;
+					width: auto;
+					height: auto;
+					margin: 0 30px;
+					border: 0;
+					border-radius: 0;
+				}
+				.logo {
+					margin: 50px auto;
+				}
+				.form-item {
+					width: auto;
+				}
+				.form-item input,
+				.form-item button,
+				.reg-bar {
+					width: 100%;
+				}
+			}
+			#title{
+				text-align: center;
+				font-size: 30px;
+				color: white;
+				margin-bottom: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="dowebok">
+			<div id="title">BBS论坛管理员注册</div>
+			<div class="form-item">
+				<input id="username" type="text" onblur="checkName()" name="s_name" autocomplete="off" value="" placeholder="管理员名称(2-6个字符)">
+				<p class="tipname" >您输入的名称不合法</p>
+			</div>
+			<div class="form-item">
+				<input id="password" type="password" onblur="checkpwd()" name="s_pwd" autocomplete="off" placeholder="登录密码(请输入6-15个字符)">
+				<p class="tippwd" >密码格式错误，或不能为空</p>
+			</div>
+			<div class="form-item">
+				<input id="truepassword" type="password" onblur="checktruepwd()" autocomplete="off" placeholder="确认密码">
+				<p class="tiptruepwd" >两次密码输入不一致，或不能为空</p>
+			</div>
+			<div class="form-item">
+				<input id="tel" type="tel" onblur="checktel()" name="s_tel" autocomplete="off" placeholder="手机号码">
+				<p class="tiptel" >手机号码格式错误，或不能为空</p>
+			</div>
+			<div class="form-item"><button id="submit">立即注册</button></div>
+			<div class="reg-bar">
+				<a class="reg" href="login.html">登陆</a>
+			</div>
+		</div>
+		<script src="images/jquery.min.js"></script>
+		<script>
+		function checkpwd(){
+			var apwd=$('#password').val();
+			var reg=/^.{6,15}$/;
+			if(reg.test(apwd) && apwd!=''){
+				$('.tippwd').hide();
+			}else{
+				$('.tippwd').show();
+			}
+		}
+		
+		function checktruepwd(){
+			var apwd=$('#password').val();
+			var atruepwd=$('#truepassword').val();
+			if(apwd==atruepwd && atruepwd!='' && apwd!=''){
+				$('.tiptruepwd').hide();
+			}else{
+				$('.tiptruepwd').show();
+			}
+		}
+		
+		function checktel(){
+			var atel=$('#tel').val();
+			var reg=/^1[3456789]\d{9}$/;
+			if(reg.test(atel)&&atel!=''){
+				$('.tiptel').hide();
+			}else{
+				$('.tiptel').show();
+			}
+		}
+		
+			
+			function checkName(){
+				var aname=$('#username').val();
+				var reg=/^[\u4e00-\u9fa5]{2,6}$/;
+				if(reg.test(aname)&&aname!=''){
+					$('.tipname').hide();
+				}else{
+					$('.tipname').show();
+				}
+			}
+		
+		
+			$(function() {
+				$('input').val('')
+				$('.tipname').hide();
+				$('.tippwd').hide();
+				$('.tiptruepwd').hide();
+				$('.tiptel').hide();
+				$('#submit').on('click', function() {
+					//获得文本框信息
+					var aname=$('#username').val();
+					var apwd=$('#password').val();
+					var atruepwd=$('#truepassword').val();
+					var atel=$('#tel').val();
+					
+					var reg1=/^[\u4e00-\u9fa5]{2,6}$/;
+					if(reg1.test(aname)&&aname!=''){
+						$('.tipname').hide();
+					}else{
+						$('.tipname').show();
+						return;
+					}
+					var reg2=/^.{6,15}$/;
+					if(reg2.test(apwd) && apwd!=''){
+						$('.tippwd').hide();
+					}else{
+						$('.tippwd').show();
+						return;
+					}
+					if(apwd==atruepwd && atruepwd!='' && apwd!=''){
+						$('.tiptruepwd').hide();
+					}else{
+						$('.tiptruepwd').show();
+						return;
+					}
+					var reg3=/^1[3456789]\d{9}$/;
+					if(reg3.test(atel)&&atel!=''){
+						$('.tiptel').hide();
+					}else{
+						$('.tiptel').show();
+						return;
+					}
+					
+					$.post('../admin.action',{op:'reg',a_name:aname,a_pwd:apwd,a_tel:atel},function(data){
+						if(1==data){
+							var r=confirm('注册成功，是否登录？');
+							if (r==true){
+								window.location.href='login.html';
+							}else{
+								return;
+							}
+						}
+					});
+				});
+			});
+		</script>
+	</body>
+
+</html>

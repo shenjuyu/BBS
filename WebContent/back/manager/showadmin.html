@@ -1,0 +1,164 @@
+<table id="show_admin"></table>
+<script type="text/javascript">
+var aid;
+$(function(){
+	$.post('admin.action',{op:'findsession'},function(data){
+		aid=data.a_id;
+	},'json');
+	
+	$('#show_admin').datagrid({
+		url:'admin.action',
+		queryParams:{op:'findbypage'},//查询参数   传入参数  默认查询可用账号信息
+		pagination:true,
+		singleSelect:true,
+		pageList:[3,6,10,13,17],
+		pageSize:6,
+		toolbar: [{
+			iconCls: 'icon-search',
+			handler: function(){
+				//点击当前图标查询禁用 用户信息
+				$('#show_admin').datagrid('load',{
+					op:'findbypage',
+					a_state:'2'
+				});
+			}
+		}],
+		columns:[[
+			{field:'a_id',title:'编号',width:100},
+			{field:'a_name',title:'管理员名称',width:100,editor:'text'},
+			{field:'a_pwd',title:'管理员密码',width:100,
+				formatter:function(value,row,index){
+					return '******';
+				}
+			},
+			{field:'a_tel',title:'手机号码',width:100,editor:'text'},
+			{field:'a_power',title:'管理员等级',width:100,
+				formatter:function(value,row,index){
+					if(row.a_power==1){
+						return '超级管理员';
+					}else if(row.a_power==2){
+						return '普通管理员';
+					}
+				}
+			},
+			{field:'a_state',title:'账户状态',width:100,align:'right',
+				formatter:function(value,row,index){
+					if(row.a_state==1){
+						return '正常';
+					}else if(row.a_state==2){
+						return '封禁';
+					}else if(row.a_state==3){
+						return '待审核';
+					}
+				}
+			},
+			{field:'a_option',title:'操作',width:100,
+				formatter:function(value,row,index){
+					if(row.a_id==aid){
+						return '';
+					}else{
+						if(row.a_state==1){
+							return '<a href="javascript:void(0)" onclick="judgePower('+row.a_id+','+row.a_state+','+index+')">封禁</a>';
+						}else if(row.a_state==2){
+							return '<a href="javascript:void(0)" onclick="judgePower('+row.a_id+','+row.a_state+','+index+')">解封</a>';
+						}else if(row.a_state==3){
+							return '<a href="javascript:void(0)" onclick="judgePower('+row.a_id+','+row.a_state+','+index+')">通过</a>';
+						}
+					}
+				}
+			}
+		]],
+		onEndEdit:function(index,row){
+			
+		},
+		onBeforeEdit:function(index,row){
+			
+			row.editing = true;
+			$(this).datagrid('refreshRow', index);
+		},
+		onAfterEdit:function(index,row){
+			$('#show_admin').datagrid('reload');
+			row.editing = false;
+			$(this).datagrid('refreshRow', index);
+		},
+		onCancelEdit:function(index,row){
+			row.editing = false;
+			$(this).datagrid('refreshRow', index);
+		}
+	});
+});
+var power=2;
+function judgePower(aid,astate,index){
+	//判断已登陆账户是否是超级管理员
+	$.post('admin.action',{op:'findsession'},function(data){
+		if(6==data.a_power){
+			$.messager.show({
+				title:'登陆提示',
+				msg:'请先登录<a href="back/login.html">点击此处前往登陆页面</a>',
+				timeout:10000,
+				showType:'slide'
+			});
+			power=1;
+			return;
+		}else if(data.a_power=='2'){
+			$.messager.show({
+				title:'权限提示',
+				msg:'您为普通管理员，权限不足',
+				timeout:5000,
+				showType:'slide'
+			});
+			power=1;
+			return;
+		}else if(data.a_power=='1'){
+			blockAdmin(aid,astate,index);
+		}
+	},'json');
+	
+}
+
+//超级管理员修改管理员状态
+function blockAdmin(aid,astate,index){
+	if(power==2){
+		$.post('admin.action',{op:'updateadmin',a_id:aid,a_state:astate},function(data){
+			if(1==data){
+				$.messager.show({
+					title:'更改提示',
+					msg:'更改成功',
+					timeout:3000,
+					showType:'slide'
+				});
+				//刷新
+				$('#show_admin').datagrid('reload');
+			}else if(2==data){
+				$.messager.show({
+					title:'更改提示',
+					msg:'更改失败',
+					timeout:3000,
+					showType:'slide'
+				});
+			}
+		});
+	}
+}
+
+function getRowIndex(target){
+	var tr = $(target).closest('tr.datagrid-row');
+	return parseInt(tr.attr('datagrid-row-index'));
+}
+function editrow(target){
+	$('#show_admin').datagrid('beginEdit', getRowIndex(target));
+}
+function deleterow(target){
+	$.messager.confirm('Confirm','Are you sure?',function(r){
+		if (r){
+			$('#show_admin').datagrid('deleteRow', getRowIndex(target));
+		}
+	});
+}
+function saverow(target){
+	$('#show_admin').datagrid('endEdit', getRowIndex(target));
+}
+function cancelrow(target){
+	$('#show_admin').datagrid('cancelEdit', getRowIndex(target));
+}
+</script>

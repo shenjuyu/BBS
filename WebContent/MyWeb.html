@@ -1,0 +1,346 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<TITLE>BBS论坛--个人主页</TITLE>
+
+		<Link rel="stylesheet" type="text/css" href="css/style.css" />
+	</HEAD>
+	<style type="text/css">
+		.pagediv{
+			width: 978px;
+			height: 66px;
+		}
+		
+		.pagediv  ul {
+			width: 400px;
+			height: 24px;
+			list-style: none;
+		}
+		.pagediv  ul li{
+			float: left;
+		}
+		 .pageli1  {
+			width: 166.18px;
+			height: 24px;
+			
+		}
+		
+		 .pageli2 {
+			width: 45px;
+			height: 24px;
+			
+		}
+		 .pageli3 {
+			width: 135px;
+			height: 24px;
+			
+		}.pageli3 input{
+			width: 32px;
+			height: 16px;
+
+		}
+		.namediv{
+		position: absolute;
+		width: 137px;
+		height: 146px;
+		background-color: white;
+		right: 60px;
+		top: 187px;
+		border: 1px solid #A6CBE7;
+		}
+		.messagetitle{
+		line-height: 35px;
+		font-family: '微软雅黑';
+		font-size: large;
+		margin-bottom: 20px;
+		}
+		.outlogin{
+		float: right;
+		}
+		
+	</style>
+
+	<BODY>
+		<DIV>
+			<IMG src="image/logo.gif">
+		</DIV>
+		<!--      用户信息、登录、注册        -->
+
+		<DIV class="h">
+			您尚未
+			<a href="login.html">登录</a>
+			&nbsp;| &nbsp;
+			<A href="reg.html">注册</A> |
+		</DIV>
+
+		<!--      主体        -->
+		<DIV  style="width: 70%; margin:0 auto ">
+			<!--      导航        -->
+			<br/>
+			<DIV>
+				&gt;&gt;
+				<B><a href="index.html">论坛首页</a></B>&gt;&gt;
+				<!-- 板块名称   href中应当在其后拼接?板块id=? -->
+				<B><a href="MyWeb.html">个人主页</a></B>
+			</DIV>
+			<br/>
+			
+			<DIV class="t">
+				<TABLE cellSpacing="0" cellPadding="0" width="100%">
+					<TR >
+						<TH class="h" style="WIDTH: 100%" colSpan="5">
+							<SPAN>&nbsp;</SPAN>
+						</TH>
+					</TR>
+					<!--       表 头           -->
+					<TR class="tr2">
+						<TD >&nbsp;</TD>
+						<TD style="WIDTH: 70%" align="center">文章</TD>
+						<TD style="WIDTH: 10%" align="center">操作</TD>
+						<TD style="WIDTH: 10%" align="center">作者</TD>
+						<TD style="WIDTH: 10%" align="center">回复</TD>
+					</TR>
+					<!--         主 题 列 表       
+					<TR class="tr3">
+						<TD>
+							<IMG src="image/topic.gif" border=0>
+						</TD>
+						<TD style="FONT-SIZE: 15px">
+							<A href="detail.html">灌水</A>
+						</TD>
+						<TD align="center">
+							<A  calss="delete"  href="detail.html">删除</A>
+							<A  calss="delete"  href="detail.html">举报</A>
+						</TD>
+						<TD align="center">t</TD>
+						<TD align="center">2</TD>
+					</TR>
+				 -->
+					
+
+
+				</TABLE>
+			</DIV>
+			
+		
+			<!--  翻 页          -->
+			<div class="pagediv">
+				<ul class="pageul">
+					<li class="pageli1">
+						<a class="fristpage" href="javascript:void(0)">首页</a>
+						<a class="frontpage" href="javascript:void(0)">上一页</a>
+						<a class="nowpage"  href="javascript:void(0)">1</a>
+						<a class="nextpage"  href="javascript:void(0)">下一页</a>
+						<a class="lastpage" href="javascript:void(0)">尾页</a>
+					</li>
+					<li class="pageli2" ></li> 
+					<li class="pageli3">，跳到 <input class="jump_input_bright" id="jumpPage6" type="text" max-page="2" theme="6" name ="inputpa">页&nbsp;<button class="btn" type="button" value="确定">确定</button>&nbsp;</li>
+					
+				</ul>
+			</div>
+				
+		</DIV >
+		<div class="namediv"  > 
+			<div style=" width: 100%;text-align:center;  height:20%; background-color: #E0F0F9;  float: left; border-bottom: 1px solid #A6CBE7; ">
+				<span class="messagetitle" >个人信息</span>
+			</div>
+			<div  style="WIDTH: 100% ;">
+					<img src="image/head/2.gif"/>
+					<B class="name" ></B><BR/><BR/>
+					<span class="time"></span>
+					
+			</div>
+		</div>
+				
+		<!--             声 明          -->
+		<BR/>
+		<CENTER class="gray">©俊泽工作室</CENTER>
+	</BODY>
+<script src="js/jquery.min.js"></script>
+<script>
+$(function(){
+	//页面加载主题
+	//显示欢迎信息
+	$.post('user.action',{op:'findsession'},function(data){
+		
+		if(2==data){
+			var r=confirm('请登录后进行查看个人主页，是否登陆？');
+			if (r==true){
+				window.location.href='login.html';
+			}else{
+				return;
+			}
+		}else{
+			
+			//得到登陆用户的id
+			userid=data.u_id;
+			var str='欢迎用户：'+data.u_name+'&nbsp;&nbsp;登陆BBS论坛<a class="outlogin" href="javascript:outbbs()" >退出BBS论坛</a>';
+			$('.h').html(str);
+			$('.namediv .name').html('姓名：'+data.u_name);
+			$('.namediv .time').html(data.u_regtime);
+			showtopicpage();
+		}
+	},'json');
+	
+});
+
+//得到table的内容
+var str1 = $('.t table ').html();
+
+
+	 function showtopicpage(){
+		 
+		 var nowpa=$('.pagediv .nowpage ').html()
+			$.get('topic.action',{op:'find',nowpage:nowpa ,u_id:userid},function(data){
+				
+				showtopic(data);
+			},'json');
+		 
+	 }
+ 
+
+		//显示话题
+		function showtopic(arr) {
+			var str = '';
+			var str2 = '';
+			for (var i = 0; i < arr[0].length; i++) {
+				//得到数据传来的uid
+				
+				
+					str += '<TR class="tr3"><TD><IMG src="image/topic.gif" border=0></TD>'
+						+ '<TD style="FONT-SIZE: 15px"><A href="detail.html?'
+						+'b_name='
+						+arr[1][i].b_name
+						+'&b_id='
+						+arr[1][i].b_id
+						+'&t_title='
+						+ arr[1][i].t_title
+						+ '&t_id='
+						+ arr[1][i].t_id
+						+ '">'
+						+ arr[1][i].t_title
+						+ '</A></TD>'
+						+ '<TD align="center">'
+						+ '<A class ="delete" href="javascript:deleteReply('+ arr[1][i].t_id + ')">删除</A>'
+						+ '</TD>'
+						+ '<TD align="center">'
+						+ arr[1][i].u_name
+						+ '</TD>'
+						+ '<TD align="center">'
+						+ arr[0][i] + '</TD></TR>';
+			
+			}
+			$('.t table ').html(str1+str);
+			//得到总页数
+			var page = '共<span class="red">' + arr[2] + '</span>页';
+			$('.pagediv .pageul .pageli2').html(page);
+
+		}
+
+		//删除话题信息
+		function deleteReply(tid) {
+			var r = confirm('请确认，是否删除话题？');
+			if (r == true) {
+				deleteR(tid);
+			} else {
+				return;
+			}
+
+			function deleteR(tid) {
+				$.get('topic.action', {
+					op : 'delete',
+					t_id : tid
+				}, function(data) {
+					if (data == 1) {
+
+						alert("删除成功");
+						window.location.reload();
+					} else if(0==data) {
+						alert("删除失败");
+					}
+				});
+			}
+
+		}
+
+		//首页
+		$(".pagediv .fristpage").click(function() {
+			$('.pagediv .nowpage').html(1);
+			showtopicpage();
+		});
+
+		// 上一页
+		$(".pagediv .frontpage").click(function() {
+			var pagenum = $('.pagediv .nowpage').html();
+			if (pagenum <= 1) {
+				$('.pagediv .nowpage').html(1);
+			} else {
+				var nowpage = pagenum - 1;
+				$('.pagediv .nowpage ').html(nowpage);
+			}
+			showtopicpage();
+		});
+
+		//下一页
+		$(".pagediv .nextpage  ").click(function() {
+			var pagenum = $('.pagediv .nowpage  ').html();
+			var AllpageNum =$('.pagediv .pageli2  .red ').html();
+			var nowpage;
+			if(pagenum <AllpageNum ){
+				 nowpage =parseInt(pagenum)+1;
+			}else if(pagenum ==AllpageNum ){
+				 nowpage=AllpageNum
+			}
+			$('.pagediv .nowpage  ').html(nowpage);
+			showtopicpage();
+		});
+
+		//尾页
+		$(".pagediv .lastpage").click(function() {
+			var pagenum = $('.pagediv .nowpage  ').html();//现在的页数
+			var lastpage = $('.pagediv .pageli2  .red ').html();//最后一页(总页数)
+			$(' .pagediv .nowpage  ').html(lastpage);
+			showtopicpage();
+
+		});
+
+		//跳转页面
+		$(".pagediv  .btn").click(function showtopic(arr) {
+			var AllpageNum =$('.pagediv .pageli2  .red ').html();
+			var inputpage= $('.pagediv .jump_input_bright' ).val();
+			var inputpa=parseInt(inputpage);
+		
+			if(inputpage >=AllpageNum||inputpage<=0){
+				$('.pagediv .jump_input_bright' ).val('');
+				alert('请输入正确的页数')
+				return;
+			}else{
+				$(' .pagediv .nowpage  ').html(inputpa);
+			}
+
+			showpage();
+
+		});
+		
+		 
+		 
+		 
+		$('.edit_img').change(function(){
+			//文件名改变后运行上传servlet
+			alert($('.edit_img').val());
+			
+		});
+		
+		function outbbs(){
+			$.post('user.action',{op:'outlogin'},function(data){
+				if(1==data){
+					window.location.href='login.html';
+				}
+			});
+		}
+			
+</script>
+</HTML>

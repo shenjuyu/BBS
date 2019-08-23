@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<TITLE>论坛--帖子举报</TITLE>
+
+		<Link rel="stylesheet" type="text/css" href="css/style.css" />
+		<style type="text/css">
+			.people,.content{
+				display: inline;
+			}
+			.center{
+				margin-left: 15%;
+				margin-top: 40px;
+			}
+			.impeachTopic{
+				margin-left: 450px
+			}
+		</style>
+	</HEAD>
+
+	<BODY>
+		<DIV>
+			<IMG src="image/logo.gif">
+		</DIV>
+		<!--      用户信息、登录、注册        -->
+
+		<DIV class="h">
+		<!-- 欢迎信息  或  提示登陆 -->
+		</DIV>
+
+		<!--      主体        -->
+		<DIV>
+			<!--      导航        -->
+			<br/>
+			<DIV>
+				&gt;&gt;
+				<B><a href="index.html">论坛首页</a></B>&gt;&gt;
+				<!-- 板块名称   href中应当在其后拼接?板块id=? -->
+				<B><a class="boardname" href="javascript:void(0)">举报</a></B>
+			</DIV>
+			<br/>
+			
+			<div class="center">
+				<span>举 报 人 ：</span>
+				<p class="people" style="border: 1px lightskyblue solid;height: 20px; width: 100px;">asfdasdf</p>
+				<br/><br/>
+				<span>举报内容：</span>
+				<p class="content" style="border: 1px lightskyblue solid;height: 20px; width: 100px;">asfd</p>
+				<br/><br/>
+				<span>举报原因:</span>
+				<p class="reason" contenteditable="true" style="border: 1px lightskyblue solid; width: 500px; height: 150px;"></p>
+				<button class="impeachTopic" onclick="impeachTopic()" >举报</button>
+			</div>
+		<!--             声 明          -->
+		<BR/>
+		<CENTER class="gray">©俊泽工作室</CENTER>
+	</BODY>
+<script src="js/jquery.min.js"></script>
+<script>
+//将地址栏中的板块名放到板块名称中
+var thisHref=decodeURI(window.location.href);
+var str=thisHref.substring(thisHref.indexOf('=')+1);
+var uid='';
+var uname='';
+var tname=str.split("&")[0];
+var tid=str.substring(str.indexOf('=')+1);
+$('.content').html('帖子标题：'+tname+',帖子ID：'+tid);
+$('.boardname').attr('href',thisHref);
+
+function impeachTopic(){
+	var reason=$('.reason').html();
+	if(''!=uid&&''!=uname){
+		//alert(tid+'--'+tname+'--'+uid+'--'+uname);
+		$.post('impeachtopic.action',{op:'add',ti_uid:uid,ti_uname:uname,ti_tid:tid,ti_title:tname,ti_reason:reason},
+			function(data){
+				if(data==1){
+					alert('举报成功,感谢您对我们工作的支持...');
+					window.close();
+				}else if(data==2){
+					alert('哎呀,出错啦...');
+				}
+			}
+		);
+	}else{
+		var r=confirm('请登录后进行举报操作，是否登陆？');
+		if (r==true){
+			window.location.href='login.html';
+		}else{
+			return;
+		}
+	}
+}
+
+//显示欢迎信息
+$.post('user.action',{op:'findsession'},function(data){
+	if(2==data){
+		var str='您尚未　<a href="login.html">登录</a>&nbsp;| &nbsp; <A href="reg.html">注册</A> |';
+		$('.h').html(str);
+		$('.people').html('请您登陆后进行举报操作');
+	}else{
+		var str='欢迎用户：'+data.u_name+'&nbsp;&nbsp;登陆BBS论坛';
+		$('.h').html(str);
+		uid=data.u_id;
+		uname=data.u_name;
+		$('.people').html('用户名：'+uname+',用户ID：'+uid);
+	}
+},'json');
+</script>
+</HTML>

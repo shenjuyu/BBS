@@ -1,0 +1,74 @@
+<table id="show_impeachtopic"></table>
+<script type="text/javascript">
+$(function(){
+	$('#show_impeachtopic').datagrid({
+		url:'impeachtopic.action',
+		queryParams:{op:'findbypage'},//查询参数   传入参数  默认查询可用账号信息
+		pagination:true,
+		singleSelect:true,
+		pageList:[3,6,10,13,17],
+		pageSize:6,
+		toolbar: [{
+			iconCls: 'icon-search',
+			handler: function(){
+				//点击当前图标查询禁用 用户信息
+				$('#show_impeachtopic').datagrid('load',{
+					op:'findbypage',
+					ti_state:'1'
+				});
+			}
+		}],
+		columns:[[
+			{field:'ti_id',title:'编号',width:100},
+			{field:'ti_uid',title:'举报人ID',width:100},
+			{field:'ti_uname',title:'举报人姓名',width:100,align:'right'},
+			{field:'ti_tid',title:'被举报贴ID',width:100,align:'right'},
+			{field:'ti_title',title:'被举报人标题',width:100,align:'right'},
+			{field:'ti_reason',title:'举报原因',width:100,align:'right'},
+			{field:'ti_state',title:'处理进度',width:100,align:'right',
+				formatter:function(value,row,index){
+					if(1==row.ti_state){
+						return '待处理';
+					}else if(2==row.ti_state){
+						return '已通过';
+					}else if(3==row.ti_state){
+						return '已驳回';
+					}
+				}
+			},
+			{field:'a_option',title:'操作',width:100,
+				formatter:function(value,row,index){
+					if(1==row.ti_state){
+						var a = '<a href="javascript:void(0)" onclick="doReport('+row.ti_id+',1)">通过</a>';
+						var b = '<a href="javascript:void(0)" onclick="doReport('+row.ti_id+',2)">驳回</a>';
+						return a+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+b;
+					}else{
+						var a='<a href="javascript:void(0)">无操作</a>';
+						return a;
+					}
+				}
+			}
+		]]
+	});
+});
+function doReport(tiid,dowhat){
+	$.post('impeachtopic.action',{op:'updatestate',ti_id:tiid,dowhat:dowhat},function(data){
+		if(1==data){
+			$('#show_impeachtopic').datagrid('reload');
+			$.messager.show({
+				title:'举报提示',
+				msg:'修改成功',
+				timeout:3000,
+				showType:'slide'
+			});
+		}else if(2==data){
+			$.messager.show({
+				title:'举报提示',
+				msg:'修改失败',
+				timeout:3000,
+				showType:'slide'
+			});
+		}
+	});
+}
+</script>

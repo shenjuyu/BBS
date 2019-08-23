@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<TITLE>论坛--注册</TITLE>
+
+<Link rel="stylesheet" type="text/css" href="css/style.css"/>
+<style type="text/css">
+#ts1{
+float: left;
+margin-left: 880px;
+margin-top: -13px;
+}
+#ts2{
+float: left;
+margin-left: 880px;
+margin-top: -13px;
+}
+#ts3{
+float: left;
+margin-left: 880px;
+margin-top: -13px;
+}
+
+
+</style>
+
+</HEAD>
+<BODY>
+<DIV>
+	<IMG src="image/logo.gif">
+</DIV>
+<BR/>
+<!--      导航        -->
+<DIV>
+	&gt;&gt;
+	<B><a href="index.html">论坛首页</a></B>&gt;&gt;
+	<B><a href="reg.html">注册</a></B>
+</DIV>
+<!--      用户注册表单        -->
+<DIV  class="t" style="MARGIN-TOP: 15px" align="center">
+	<FORM name="regForm" action="user.action?op=reg" method="post" onsubmit="return verify()">
+		<br/><p>用&nbsp;户&nbsp;名&nbsp; :
+			<INPUT class="input" id="name"  tabIndex="1" type="text" maxLength="20" size="20" name="u_name"  onblur="Name(this.id,'ts1')"></p><span id="ts1" >请输入用户名</span>
+		<br/><p>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码 :
+			<INPUT class="input"  id="textpwd"  tabIndex="2" type="password" maxLength="20" size="20" name="u_pwd" onblur="pwd(this.id,'ts2')"></p><span id="ts2" >输入密码</span>
+		<br/><p>重复密码 :
+			<INPUT class="input"  id="textpwd1" tabIndex="3" type="password" maxLength="20" size="20" name="u_pwd1" onblur="pwd1(this.id,'ts3')" ></p><span id="ts3" >重复输入密码</span>
+		<br/><p>性别 &nbsp;
+			女<input type="radio" name="u_sex" value="女">
+			男<input type="radio" name="u_sex" value="男" checked="checked" /></p>
+		<br/>请选择头像 <br/>
+		<image src="image/head/1.gif"/><input type="radio" name="u_head" value="1.gif" checked="checked">
+		<img src="image/head/2.gif"/><input type="radio" name="u_head" value="2.gif">
+		<img src="image/head/3.gif"/><input type="radio" name="u_head" value="3.gif">
+		<img src="image/head/4.gif"/><input type="radio" name="u_head" value="4.gif">
+		<img src="image/head/5.gif"/><input type="radio" name="u_head" value="5.gif">
+		<BR/>
+		<img src="image/head/6.gif"/><input type="radio" name="u_head" value="6.gif">
+		<img src="image/head/7.gif"/><input type="radio" name="u_head" value="7.gif">
+		<img src="image/head/8.gif"/><input type="radio" name="u_head" value="8.gif">
+		<img src="image/head/9.gif"/><input type="radio" name="u_head" value="9.gif">
+		<img src="image/head/10.gif"/><input type="radio" name="u_head" value="10.gif">
+		<BR/>
+		<img src="image/head/11.gif"/><input type="radio" name="u_head" value="11.gif">
+		<img src="image/head/12.gif"/><input type="radio" name="u_head" value="12.gif">
+		<img src="image/head/13.gif"/><input type="radio" name="u_head" value="13.gif">
+		<img src="image/head/14.gif"/><input type="radio" name="u_head" value="14.gif">
+		<img src="image/head/15.gif"/><input type="radio" name="u_head" value="15.gif">
+		<br/>
+			<INPUT class="btn" tabIndex="4" type="submit" value="注 册">
+	</FORM>
+</DIV>
+<!--      声明        -->
+<BR>
+<CENTER class="gray">©俊泽工作室</CENTER>
+</BODY>
+<script type="text/javascript"  src="js/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+
+	function Name(tishi,id){
+		var name =$('input[name="u_name"]').val();
+		var reg=/^[\u4e00-\u9fa5]{1,7}$|^[\dA-Za-z_]{1,14}$/;
+		if(name==""){
+			document.getElementById(id).innerHTML = "<font color='red'>用户名不能为空</font>";
+		}else if(!reg.test(name)){
+			document.getElementById(id).innerHTML = "<font color='red'>用户名须在7个汉字或14个字符以内</font>";
+		}else if(name!=""){
+			document.getElementById(id).innerHTML = "<font color='green'>用户名可用</font>";
+			
+		}
+	}
+
+	function pwd(tishi,id){
+		
+		var pwd =$('input[name="u_pwd"]').val();
+		var reg=/^.{6,15}$/;
+		if(""==pwd){
+			document.getElementById(id).innerHTML = "<font color='red'>密码不能为空且密码长度需6-15个字符</font>";
+		}else if(!reg.test(pwd)){
+			document.getElementById(id).innerHTML = "<font color='red'>密码长度需6-15个字符</font>";
+		}else if(pwd!=""){
+			document.getElementById(id).innerHTML = "<font color='green'>密码可用</font>";
+		}
+	}
+
+	function pwd1(tishi,id){
+		
+		var pwd =$('input[name="u_pwd"]').val();
+		var pwd1 =$('input[name="u_pwd1"]').val();
+
+		
+		if(pwd1==""){
+			document.getElementById(id).innerHTML = "<font color='red'>重复密码不能为空</font>";
+			
+		}
+		
+		if(pwd==pwd1&&(pwd!=""||pwd1!="")){
+			document.getElementById(id).innerHTML = "<font color='green'>密码一致</font>";
+			
+		}
+		if(pwd!=pwd1){
+			document.getElementById(id).innerHTML = "<font color='red'>请输入的密码一致</font>";
+		}	
+		
+	}
+	
+
+	function verify(){
+		
+		var name =$('input[name="u_name"]').val();
+		var pwd =$('input[name="u_pwd"]').val();
+		var pwd1 =$('input[name="u_pwd1"]').val();
+	
+		
+		   if (pwd == '' ) {
+	            alert('请输入密码');
+	            return false;
+	        }
+	        if(pwd1!=pwd){
+	            alert('请输入密码');
+	            return false;
+	        }
+	        if(name==''){
+	            alert('输入用户名');
+	            return false;
+	        }
+	
+		return true;
+	}
+
+
+</script>
+</HTML>
