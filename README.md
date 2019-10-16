@@ -29,7 +29,10 @@ BBS论坛的模仿项目
 	
 	tomcat 8.0.53
 	
-	mysql 5.7
+	mysql 5.7 (由于mysql5.7版本默认设置ONLY_FULL_GROUP_BY限制，此项目中的某些sql查询语句将无法执行[点击此处寻求解决方法](https://www.cnblogs.com/fswhq/p/9729761.html "针对mysql5.7的解决方法"))
+	
+	在进行项目部署之前要将[context.xml](https://github.com/shenjuyu/BBS/blob/master/WebContent/META-INF/context.xml)中的username与password的值进行相应的修改
+	
 	
 	服务器 阿里云服务器 系统：CentOS 7.6 64位
 	
