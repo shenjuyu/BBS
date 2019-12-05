@@ -128,6 +128,7 @@
 					<ul>
 						<li><a class="btn easyui-linkbutton" data-options="plain:true" href="back/manager/reportuser.html">举报用户管理</a></li>
 						<li><a class="btn easyui-linkbutton" data-options="plain:true" href="back/manager/reporttopic.html">举报帖子管理</a></li>
+						<li><a class="btn easyui-linkbutton" data-options="plain:true" href="back/manager/reportreply.html">举报回复管理</a></li>
 					</ul>
 				</div>
 			</div>

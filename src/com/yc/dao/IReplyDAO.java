@@ -48,6 +48,14 @@ public interface IReplyDAO {
 	 * @throws Exception
 	 */
 	public int addReply(ReplyPO po) throws Exception;
+	
+	/**
+	 * 根据id查找单条回复
+	 * @param po
+	 * @return
+	 * @throws Exception
+	 */
+	public ReplyPO findReplyByTid(ReplyPO po) throws Exception;
 
 	/**
 	 * 根据tid查询回复的数量

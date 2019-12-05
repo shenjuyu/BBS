@@ -58,4 +58,10 @@ public class ImpeachUserPO implements Serializable {
 	public void setUi_reason(String ui_reason) {
 		this.ui_reason = ui_reason;
 	}
+	@Override
+	public String toString() {
+		return "ImpeachUserPO [ui_id=" + ui_id + ", ui_uid=" + ui_uid + ", ui_uname=" + ui_uname + ", ui_rid=" + ui_rid
+				+ ", ui_rname=" + ui_rname + ", ui_reason=" + ui_reason + ", ui_state=" + ui_state + "]";
+	}
+	
 }

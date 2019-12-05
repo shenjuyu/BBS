@@ -33,14 +33,25 @@ public class ReplyServlet extends BaseServlet {
 			dofindpage(request,response);
 		}else if("findlouzhu".equals(op)){
 			dofindzhulou(request,response);
-		}
-		else if("delete".equals(op)){
+		}else if("delete".equals(op)){
 			doDeleteRpely(request,response);
+		}else if("findById".equals(op)) {
+			doFindById(request,response);
 		}
 	}
 	
-	
-	
+	private void doFindById(HttpServletRequest request, HttpServletResponse response) {
+		ReplyPO po=parseRequestToObject(request, ReplyPO.class);
+		try {
+			ReplyPO replyPo=replydao.findReplyByTid(po);
+			toPrintString(response, replyPo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 	//查询主楼
 	private void dofindzhulou(HttpServletRequest request, HttpServletResponse response) {
 		TopicVO vo=parseRequestToObject(request, TopicVO.class);

@@ -118,4 +118,12 @@ public class ReplyDAOImpl implements IReplyDAO {
 		return db.update(sql, params);
 	}
 
+	@Override
+	public ReplyPO findReplyByTid(ReplyPO po) throws Exception {
+		String sql="select * from bbs_reply where r_id=?";
+		List<Object> params = new ArrayList<Object>();
+		params.add(po.getR_id());
+		return db.findMutil(sql, params, ReplyPO.class).get(0);
+	}
+
 }

@@ -1,0 +1,75 @@
+<table id="show_impeachreply"></table>
+<script type="text/javascript">
+$(function(){
+	$('#show_impeachreply').datagrid({
+		url:'impeachreply.action',
+		queryParams:{op:'findbypage'},//查询参数   传入参数  默认查询可用账号信息
+		pagination:true,
+		singleSelect:true,
+		pageList:[3,6,10,13,17],
+		pageSize:6,
+		toolbar: [{
+			iconCls: 'icon-search',
+			handler: function(){
+				//点击当前图标查询禁用 用户信息
+				$('#show_impeachreply').datagrid('load',{
+					op:'findbypage',
+					ti_state:'1'
+				});
+			}
+		}],
+		columns:[[
+			{field:'ri_id',title:'编号',width:100},
+			{field:'ri_uid',title:'举报人ID',width:100},
+			{field:'ri_uname',title:'举报人姓名',width:100,align:'right'},
+			{field:'ri_rid',title:'被举报回复ID',width:100,align:'right'},
+			{field:'ri_title',title:'被举报人标题',width:100,align:'right'},
+			{field:'ri_content',title:'被举报人回复',width:200,align:'right'},
+			{field:'ri_reason',title:'举报原因',width:100,align:'right'},
+			{field:'ri_state',title:'处理进度',width:100,align:'right',
+				formatter:function(value,row,index){
+					if(1==row.ri_state){
+						return '待处理';
+					}else if(2==row.ri_state){
+						return '已删除';
+					}else if(3==row.ri_state){
+						return '已驳回';
+					}
+				}
+			},
+			{field:'a_option',title:'操作',width:150,
+				formatter:function(value,row,index){
+					if(1==row.ri_state){
+						var a = '<a href="javascript:void(0)" onclick="doReport('+row.ri_rid+','+row.ri_id+',1)">删除回复</a>';
+						var b = '<a href="javascript:void(0)" onclick="doReport('+row.ri_rid+','+row.ri_id+',2)">驳回</a>';
+						return a+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+b;
+					}else{
+						var a='<a href="javascript:void(0)">无操作</a>';
+						return a;
+					}
+				}
+			}
+		]]
+	});
+});
+function doReport(ririd,riid,dowhat){
+	$.post('impeachreply.action',{op:'updatestate',ri_id:riid,dowhat:dowhat,ri_rid:ririd},function(data){
+		if(1==data){
+			$('#show_impeachreply').datagrid('reload');
+			$.messager.show({
+				title:'举报提示',
+				msg:'操作成功',
+				timeout:3000,
+				showType:'slide'
+			});
+		}else if(2==data){
+			$.messager.show({
+				title:'举报提示',
+				msg:'操作失败',
+				timeout:3000,
+				showType:'slide'
+			});
+		}
+	});
+}
+</script>

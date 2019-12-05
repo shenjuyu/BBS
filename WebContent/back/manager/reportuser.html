@@ -30,17 +30,17 @@ $(function(){
 					if(1==row.ui_state){
 						return '待处理';
 					}else if(2==row.ui_state){
-						return '已通过';
+						return '已封禁';
 					}else if(3==row.ui_state){
 						return '已驳回';
 					}
 				}
 			},
-			{field:'a_option',title:'操作',width:100,
+			{field:'a_option',title:'操作',width:150,
 				formatter:function(value,row,index){
 					if(1==row.ui_state){
-						var a = '<a href="javascript:void(0)" onclick="doReport('+row.ui_id+',1)">通过</a>';
-						var b = '<a href="javascript:void(0)" onclick="doReport('+row.ui_id+',2)">驳回</a>';
+						var a = '<a href="javascript:void(0)" onclick="doReport('+row.ui_rid+','+row.ui_id+',1)">封禁用户</a>';
+						var b = '<a href="javascript:void(0)" onclick="doReport('+row.ui_rid+','+row.ui_id+',2)">驳回</a>';
 						return a+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+b;
 					}else{
 						var a='<a href="javascript:void(0)">无操作</a>';
@@ -51,20 +51,20 @@ $(function(){
 		]]
 	});
 });
-function doReport(uiid,dowhat){
-	$.post('impeachuser.action',{op:'updatestate',ui_id:uiid,dowhat:dowhat},function(data){
+function doReport(uirid,uiid,dowhat){
+	$.post('impeachuser.action',{op:'updatestate',ui_id:uiid,ui_rid:uirid,dowhat:dowhat},function(data){
 		if(1==data){
 			$('#show_impeachuser').datagrid('reload');
 			$.messager.show({
 				title:'举报提示',
-				msg:'修改成功',
+				msg:'操作成功',
 				timeout:3000,
 				showType:'slide'
 			});
 		}else if(2==data){
 			$.messager.show({
 				title:'举报提示',
-				msg:'修改失败',
+				msg:'操作失败',
 				timeout:3000,
 				showType:'slide'
 			});

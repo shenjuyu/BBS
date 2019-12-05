@@ -182,6 +182,7 @@ function showpage(){
 	//alert(4);
 	var nowpa=$('.pagediv .nowpage ').html()
 	$.get('reply.action',{op:'find' ,nowpage:nowpa,t_id:tid },function(data){
+		console.log(data);
 		showreply(data);
 	},'json');
 	
@@ -190,11 +191,13 @@ function showpage(){
 function showreply(arr){
 	
 	
-	//回复界面显示话题与楼主信息（最上面的那一条）
+	// 回复界面显示话题与楼主信息（最上面的那一条）
 	uid=arr.rows[0].u_id;
-	//根据用户的id来判断只显示除自己以外的用户[举报]按钮
+	// 帖子标题
+	var t_title=arr.rows[0].t_title;
+	// 根据用户的id来判断只显示除自己以外的用户[举报]按钮
 	if(userid!=uid){
-		str4='<A  calss="Report " href="javascript:impeach(\''
+		str4='<A  calss="Report " href="javascript:impeachuser(\''
 			+ arr.rows[0].u_name + '\',\'' + arr.rows[0].u_id
 			+ '\')">  [举报]</A> '
 	}else if(userid==uid){
@@ -215,8 +218,10 @@ function showreply(arr){
 	var str1='';
 	//显示删除链接用
 	var str2='';
-	//显示举报链接用
+	//显示举报用户链接用
 	var str3='';
+	//显示举报回复链接用
+	var str4='';
 	for(var i=1 ;i<arr.rows.length ;i++){
 		var uid=arr.rows[i].u_id ;
 		//判断根据用户id显示[删除]
@@ -238,34 +243,36 @@ function showreply(arr){
 			//用户判断
 			if(userid!=uid){
 				str2='<A class ="delete"  href="javascript:deleteReply('+arr.rows[i].r_id+')"></A>'
-			}
-			else if(userid ==uid){
+			} else if(userid ==uid){
 				str2='<A class ="delete"  href="javascript:deleteReply('+arr.rows[i].r_id+')"> [删除]</A>'
 			}
 		}
 		
 		//根据用户的id来判断只显示除自己以外的用户举报按钮
 		if(userid!=uid){
-			str3='<A  calss="Report " href="javascript:impeach(\''
+			str3='<A  calss="Report " href="javascript:impeachuser(\''
 				+ arr.rows[i].u_name + '\',\'' + arr.rows[i].u_id
-				+ '\')">  [举报]</A> '
+				+ '\')">  [举报]</A> ';
+			str4='<A  calss="Report " href="javascript:impeachreply(\''
+				+ t_title + '\',\'' + arr.rows[i].r_id
+				+ '\')">  [举报]</A> ';
 		}else if(userid==uid){
-			str3 =''
+			str3 ='';
 		}
-	 str+='<TR class="tr1"><TH style="WIDTH: 20%"><B>'+arr.rows[i].u_name+str1+'</B><BR/><BR/>'
+		str+='<TR class="tr1"><TH style="WIDTH: 20%"><B>'+arr.rows[i].u_name+str1+'</B><BR/><BR/>'
 			+'<image src="image/head/'+arr.rows[i].u_head+'"/><BR/>注册:['+arr.rows[i].u_regtime+']'+str3+'<BR/></TH>' 
 			+'<TH><H4>第'+(i)+'楼</H4><DIV>'+arr.rows[i].r_content+'</DIV><DIV class="tipad gray">'
-			+'发表：['+arr.rows[i].r_publishtime+'] &nbsp;'+str2+''
+			+'发表：['+arr.rows[i].r_publishtime+'] &nbsp;'+str4+''+str2+''
 			+'</DIV></TH></TR>';
 	}
-		$('.t .tab1 ').html(str);
-		//得到总页数
-		if(0==arr.total){
-			var page ='共<span class="red">1</span>页';
-		}else{
-			var page ='共<span class="red">'+arr.total+'</span>页';
-		}
-		$('.pagediv .pageul .pageli2').html(page);
+	$('.t .tab1 ').html(str);
+	//得到总页数
+	if(0==arr.total){
+		var page ='共<span class="red">1</span>页';
+	}else{
+		var page ='共<span class="red">'+arr.total+'</span>页';
+	}
+	$('.pagediv .pageul .pageli2').html(page);
 }
 
 //找到楼主id  查找是否是楼主
@@ -360,8 +367,12 @@ $(".pagediv  .btn").click(function showtopic(arr){
 
 });
 
-function impeach(name,uid){
+function impeachuser(name,uid){
 	window.open("impeachuser.html?u_uname="+name+"&u_id="+uid, "newwindow", "height=750px, width=700, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no");
+}
+
+function impeachreply(title,rid){
+	window.open("impeachreply.html?t_title="+title+"&r_id="+rid, "newwindow", "height=750px, width=700, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no");
 }
 
 function send(){

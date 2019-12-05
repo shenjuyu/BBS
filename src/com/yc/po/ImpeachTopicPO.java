@@ -59,6 +59,10 @@ public class ImpeachTopicPO implements Serializable{
 	public void setTi_reason(String ti_reason) {
 		this.ti_reason = ti_reason;
 	}
-	
+	@Override
+	public String toString() {
+		return "ImpeachTopicPO [ti_id=" + ti_id + ", ti_uid=" + ti_uid + ", ti_uname=" + ti_uname + ", ti_tid=" + ti_tid
+				+ ", ti_title=" + ti_title + ", ti_reason=" + ti_reason + ", ti_state=" + ti_state + "]";
+	}
 	
 }

@@ -112,39 +112,34 @@ public class ImpeachUserDAOImpl implements IImpeachUserDAO {
 		List<Object> params=null;
 		if(null!=po){
 			params=new ArrayList<Object>();
-			if(null!=po.getUi_uid()){
-				params.add(po.getUi_uid());
-				sb.append(" ,ti_uid=? ");
-			}
-			if(null!=po.getUi_uname()){
-				params.add(po.getUi_uname());
-				sb.append(" ,ti_uname=? ");
-			}
-			if(null!=po.getUi_rid()){
-				params.add(po.getUi_rid());
-				sb.append(" ,ui_rid=? ");
-			}
-			if(null!=po.getUi_rname()){
-				params.add(po.getUi_rname());
-				sb.append(" ,ui_rname=? ");
-			}
-			if(null!=po.getUi_reason()){
-				params.add(po.getUi_reason());
-				sb.append(" ,ti_reason=? ");
-			}
 			if(null!=po.getUi_state()){
 				params.add(po.getUi_state());
 				sb.append(" ,ui_state=? ");
 			}
 		}
-		sb.append(" where 1=1  ");
 		if(null!=po){
 			if(null!=po.getUi_id()){
 				params.add(po.getUi_id());
-				sb.append(" and ui_id=? ");
+				sb.append(" where ui_id=? ");
 			}
 		}
-		return db.update(sb.toString(), params);
+		
+		List<String> sqls=new ArrayList<String>();
+		List<List<Object>> params1=new ArrayList<List<Object>>();
+		params1.add(params);
+		sqls.add(sb.toString());
+		
+		if(po.getUi_state()==2) {
+			String sql="update bbs_user  set u_state=2 where u_id=?";
+			List<Object> param=new ArrayList<Object>();
+			param.add(po.getUi_rid());
+			sqls.add(sql);
+			params1.add(param);
+		}
+		System.out.println(po);
+		System.out.println(sqls);
+		System.out.println(params1);
+		return db.update(sqls, params1);
 	}
 
 }
